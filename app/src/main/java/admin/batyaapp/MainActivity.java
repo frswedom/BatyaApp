@@ -7,10 +7,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static java.lang.Math.*;
+import static java.lang.Math.log;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 /**
- * Created by admin on 04/07/2014.
+ * Created by admin at 18:56 on 04/07/2014.
  */
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -21,6 +23,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             buttonMinus, buttonPlus, buttonMultiply, buttonDevide,
             buttonRoot, buttonPower, buttonLn, buttonClear;
     String firstOperand = "";
+    boolean editable = true;
     int operation = 0;
     final int plus = 1, minus = 2, multiply = 3, devide = 4, power = 5;
 
@@ -88,79 +91,46 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.button0:
-                if(!output.getText().toString().equals("0")) {
-                    output.setText(output.getText().toString() + "0");
-                }
+                setDigit(0);
                 break;
             case R.id.button1:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("1");
-                } else {
-                    output.setText(output.getText().toString() + "1");
-                }
+                setDigit(1);
                 break;
             case R.id.button2:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("2");
-                } else {
-                    output.setText(output.getText().toString() + "2");
-                }
+                setDigit(2);
                 break;
             case R.id.button3:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("3");
-                } else {
-                    output.setText(output.getText().toString() + "3");
-                }
+                setDigit(3);
                 break;
             case R.id.button4:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("4");
-                } else {
-                    output.setText(output.getText().toString() + "4");
-                }
+                setDigit(4);
                 break;
             case R.id.button5:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("5");
-                } else {
-                    output.setText(output.getText().toString() + "5");
-                }
+                setDigit(5);
                 break;
             case R.id.button6:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("6");
-                } else {
-                    output.setText(output.getText().toString() + "6");
-                }
+                setDigit(6);
                 break;
             case R.id.button7:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("7");
-                } else {
-                    output.setText(output.getText().toString() + "7");
-                }
+                setDigit(7);
                 break;
             case R.id.button8:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("8");
-                } else {
-                    output.setText(output.getText().toString() + "8");
-                }
+                setDigit(8);
                 break;
             case R.id.button9:
-                if(output.getText().toString().equals("0")) {
-                    output.setText("9");
-                } else {
-                    output.setText(output.getText().toString() + "9");
-                }
+                setDigit(9);
                 break;
             case R.id.buttonDot:
-                if (output.getText().toString().equals("")) {
-                    output.setText("0.");
+                if (editable) {
+                    if (output.getText().toString().equals("")) {
+                        output.setText("0.");
+                    } else if (!output.getText().toString().contains(".")) {
+                        output.setText(output.getText().toString() + ".");
+                    }
                 }
-                else if(!output.getText().toString().contains(".")) {
-                    output.setText(output.getText().toString() + ".");
+                else {
+                    output.setText("0.");
+                    editable = true;
                 }
                 break;
             case R.id.buttonEqual:
@@ -171,20 +141,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if (operation>0) {
                         Equal();
                     }
-                    operation = minus;
                     firstOperand = output.getText().toString();
-                    output.setText("");
+                    operation = minus;
+                    editable = false;
                 }
                 break;
             case R.id.buttonPlus:
                 if (!output.getText().toString().equals("")) {
                     if (operation>0) {
                         Equal();
-                    } else {
-                        operation = plus;
-                        firstOperand = output.getText().toString();
-                        output.setText("");
                     }
+                    firstOperand = output.getText().toString();
+                    operation = plus;
+                    editable = false;
                 }
                 break;
             case R.id.buttonMultiply:
@@ -192,9 +161,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if (operation>0) {
                         Equal();
                     }
-                    operation = multiply;
                     firstOperand = output.getText().toString();
-                    output.setText("");
+                    operation = multiply;
+                    editable = false;
                 }
                 break;
             case R.id.buttonDevide:
@@ -202,13 +171,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if (operation>0) {
                         Equal();
                     }
-                    operation = devide;
                     firstOperand = output.getText().toString();
-                    output.setText("");
+                    operation = devide;
+                    editable = false;
                 }
                 break;
+            case R.id.buttonPower:
+                if (!output.getText().toString().equals("")) {
+                    if (Double.parseDouble(output.getText().toString()) >= 0) {
+                        if (operation>0) {
+                            Equal();
+                        }
+                        firstOperand = output.getText().toString();
+                        operation = power;
+                        editable = false;
+                    } else {
+                        Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+
             case R.id.buttonClear:
-                output.setText("");
+                output.setText("0");
                 firstOperand = "";
                 operation = 0;
                 break;
@@ -216,17 +200,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 if (!output.getText().toString().equals("")) {
                     if (Double.parseDouble(output.getText().toString()) >= 0) {
                         setText(Double.toString(sqrt(Double.parseDouble(output.getText().toString()))));
-                    } else {
-                        Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
-                    }
-                }
-                break;
-            case R.id.buttonPower:
-                if (!output.getText().toString().equals("")) {
-                    if (Double.parseDouble(output.getText().toString()) >= 0) {
-                        firstOperand = output.getText().toString();
-                        operation = power;
-                        output.setText("");
                     } else {
                         Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
                     }
@@ -241,10 +214,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     }
                 }
                 break;
-
         }
 
         }
+    private void setDigit(int digit) {
+        if (editable) {
+            if (digit == 0) {
+                if (!output.getText().toString().equals("0")) {
+                    output.setText(output.getText().toString() + "0");
+                }
+            } else {
+                if (output.getText().toString().equals("0")) {
+                    output.setText(Integer.toString(digit));
+                } else {
+                    output.setText(output.getText().toString() + Integer.toString(digit));
+                }
+            }
+        }
+        else {
+            output.setText(Integer.toString(digit));
+            editable = true;
+        }
+    }
 
     private void Equal() {
         if ((!output.getText().toString().equals("")) && (!firstOperand.equals(""))) {
